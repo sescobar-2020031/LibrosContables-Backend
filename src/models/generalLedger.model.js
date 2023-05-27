@@ -19,8 +19,7 @@ const generalLedgerSchema = mongoose.Schema({
         balance: {
             account: Number,
             position: String
-        },
-        totalItemLedger: Number
+        }
     }]
 });
 
