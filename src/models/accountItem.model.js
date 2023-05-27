@@ -6,7 +6,7 @@ const accountItemSchema = mongoose.Schema({
     date: Date,
     numberItem: Number,
     accounts: [{
-        account: { type: mongoose.Schema.ObjectId, ref: 'User' },
+        account: { type: mongoose.Schema.ObjectId, ref: 'Account' },
         position: String,
         amount: Number
     }],

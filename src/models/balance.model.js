@@ -4,13 +4,13 @@ const mongoose = require("mongoose");
 
 const balanceSchema = mongoose.Schema({
     diaryBook: { type: mongoose.Schema.ObjectId, ref: 'DiaryBook' },
-    accountItem: {
+    accountItem: [{
         name: String,
-        amount: {
+        account: {
             position: String,
             amount: Number
         }
-    },
+    }],
     fullDebit: Number,
     fullCredit: Number
 });

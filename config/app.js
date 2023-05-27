@@ -7,6 +7,8 @@ const cors = require("cors");
 
 //Import the Routes
 const userRoutes = require("../src/routes/user.route");
+const accountItemsRoutes = require("../src/routes/accountItem.route");
+const accountRoutes = require("../src/routes/account.route");
 
 //APP -> HTTP Server (Express)
 const app = express(); //Create Express Server
@@ -19,6 +21,8 @@ app.use(cors());
 
 //Applying the routes
 app.use("/user", userRoutes);
+app.use("/account", accountRoutes);
+app.use("/accountItem", accountItemsRoutes);
 
 //Export//
 module.exports = app;

@@ -1,8 +1,10 @@
 'use strict'
 
 const User = require('../models/user.model');
+const DiaryBook = require('../models/diaryBook.model');
 const jwt = require('../services/jwt');
 const { validateData, findUser, encryptPassword, checkPassword } = require('../utlis/validate');
+const moment = require('moment-timezone');
 
 exports.testUser = (req, res) => {
     return res.send({ message: 'El este esta funcionando en -User-' });
@@ -52,7 +54,26 @@ exports.login = async (req, res) => {
 
         let token = await jwt.createToken(userExist);
         userExist.password = undefined;
-        return res.send({ token, message: `Bienvenido ${userExist.fullName}`, user: userExist });
+
+        const dataDiaryBook = {
+            month: moment.tz('America/Guatemala').format('M'),
+            user: userExist._id
+        }
+
+        const diaryBookExist = await DiaryBook.findOne({
+            $and: [
+                { user: userExist._id },
+                { month: dataDiaryBook.month },
+            ]
+        });
+
+        if (!diaryBookExist) {
+            let diaryBook = new DiaryBook(dataDiaryBook);
+            await diaryBook.save();
+            diaryBookExist = diaryBook
+        }
+
+        return res.send({ diaryBookExist, token, message: `Bienvenido ${userExist.fullName}`, user: userExist });
     } catch (err) {
         console.log(err);
         return res.status(500).send({ err, message: 'Error logueando al usuario' });
