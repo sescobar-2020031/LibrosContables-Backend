@@ -29,7 +29,7 @@ exports.saveAccountItem = async (req, res) => {
     data.numberItem = accountsItemsBefore.accountItems.length + 1
 
     let fulldebit = 0;
-    let fullcredit = 0;+
+    let fullcredit = 0;
 
     params.accounts.map((account) => {
         if (account.position == "Credit") {
