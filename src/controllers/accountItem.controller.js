@@ -230,3 +230,18 @@ exports.getBalance = async (req, res) => {
         balance
     });
 }
+
+exports.getGeneralLedger = async (req, res) => {
+    const params = req.body;
+    const generalLedger = await GeneralLedger.findOne({ diaryBook: params.idDiary })
+    if (!generalLedger) {
+        return res.status(400).send({
+            message: 'No existe el balance'
+        });
+    }
+
+    res.status(200).send({
+        message: 'General Ledger',
+        generalLedger
+    });
+}
