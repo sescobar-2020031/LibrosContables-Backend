@@ -7,7 +7,7 @@ exports.saveAccount = async (req, res) => {
     try {
         const params = req.body
 
-        const user = await User.findOne({ email: params.email });
+        const user = await User.findOne({ email: req.user.email });
         if (!user) return res.status(500).send({ message: 'Usuario no encontrada' });
 
         const data = {
@@ -27,7 +27,7 @@ exports.saveAccount = async (req, res) => {
 
 exports.getAccounts = async (req, res) => {
     try {
-        const params = req.body
+        const params = req.user
         const user = await User.findOne({ email: params.email });
         if (!user) return res.status(500).send({ message: 'Cuenta no encontrada' });
         let accounts = await Account.find({ user: user._id });
