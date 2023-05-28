@@ -1,13 +1,14 @@
 'use strict'
 
 const Account = require('../models/account.model');
+const User = require('../models/user.model');
 
 exports.saveAccount = async (req, res) => {
     try {
         const params = req.body
 
-        const user = await Account.findOne({ email: params.email });
-        if (!user) return res.status(500).send({ message: 'Cuenta no encontrada' });
+        const user = await User.findOne({ email: params.email });
+        if (!user) return res.status(500).send({ message: 'Usuario no encontrada' });
 
         const data = {
             name: params.name,
@@ -27,9 +28,10 @@ exports.saveAccount = async (req, res) => {
 exports.getAccounts = async (req, res) => {
     try {
         const params = req.body
-        const user = await Account.findOne({ email: params.email });
+        const user = await User.findOne({ email: params.email });
         if (!user) return res.status(500).send({ message: 'Cuenta no encontrada' });
         let accounts = await Account.find({ user: user._id });
+        console.log(accounts);
         return res.status(200).send({ message: 'Cuentas Encontradas Exitosamente', accounts });
     } catch (err) {
         console.log(err);
