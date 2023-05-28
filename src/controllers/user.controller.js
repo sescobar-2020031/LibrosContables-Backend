@@ -60,7 +60,7 @@ exports.login = async (req, res) => {
             user: userExist._id
         }
 
-        const diaryBookExist = await DiaryBook.findOne({
+        let diaryBookExist = await DiaryBook.findOne({
             $and: [
                 { user: userExist._id },
                 { month: dataDiaryBook.month },

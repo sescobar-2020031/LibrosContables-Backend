@@ -1,8 +1,10 @@
 'use strict'
 
+const { validateData } = require('../utlis/validate');
 const AccountItem = require('../models/accountItem.model');
 const DiaryBook = require('../models/diaryBook.model');
 const GeneralLedger = require('../models/generalLedger.model');
+const Balance = require('../models/balance.model');
 const moment = require('moment-timezone');
 
 exports.saveAccountItem = async (req, res) => {
@@ -13,22 +15,32 @@ exports.saveAccountItem = async (req, res) => {
         description: params.description
     };
 
+    let requrided = {
+        date: moment.tz('America/Guatemala').format(),
+        accounts: params.accounts,
+        description: params.description,
+        idDiary: params.idDiary
+    };
+
+    let dataRequired = await validateData(requrided);
+    if (dataRequired) return res.status(400).send(dataRequired);
+
     const accountsItemsBefore = await DiaryBook.findOne({ _id: params.idDiary });
     data.numberItem = accountsItemsBefore.accountItems.length + 1
 
     let fulldebit = 0;
-    let fullcredit = 0;
+    let fullcredit = 0;+
 
     params.accounts.map((account) => {
         if (account.position == "Credit") {
-            fullcredit += account.amount
+            fullcredit += +account.amount
         } else if (account.position == "Debit") {
-            fulldebit += account.amount
+            fulldebit += +account.amount
         }
     })
 
-    data.fulldebit = fulldebit;
-    data.fullcredit = fullcredit;
+    data.fullDebit = fulldebit;
+    data.fullCredit = fullcredit;
 
     let accountItem = new AccountItem(data);
     accountItem.save();
@@ -39,10 +51,6 @@ exports.saveAccountItem = async (req, res) => {
     }
 
     await DiaryBook.findOneAndUpdate({ _id: params.idDiary }, { $push: { accountItems: accountItem._id } }, { new: true })
-
-    const dataGeneralLedger = {
-        diaryBook: params.idDiary
-    }
 
     const accounts = await DiaryBook.findOne({ _id: params.idDiary })
         .populate({
@@ -170,8 +178,12 @@ exports.saveAccountItem = async (req, res) => {
         return acc;
     }, 0);
 
-    console.log(balance);
-    console.log(balance.accountItem[0]);
+    const balanceExist = await Balance.findOne({ diaryBook: params.idDiary });
+    if (balanceExist) {
+        await Balance.findOneAndDelete({ diaryBook: params.idDiary })
+    }
+    const balanceNew = new Balance(balance);
+    balanceNew.save();
 
     res.status(200).send({
         message: 'Cuenta guardada exitosamente',
@@ -181,7 +193,7 @@ exports.saveAccountItem = async (req, res) => {
 
 exports.getDiary = async (req, res) => {
     const params = req.body;
-    const diary = await DiaryBook.findOne({ _id: params.idDiary }).populate({
+    const diary = await DiaryBook.findOne({ diaryBook: params.idDiary }).populate({
         path: 'accountItems',
         populate: {
             path: 'accounts',
@@ -195,8 +207,26 @@ exports.getDiary = async (req, res) => {
             message: 'No existe la cuenta'
         });
     }
+
+    const ExistDiary = diary.accountItems
+
     res.status(200).send({
         message: 'Cuenta encontrada',
-        diary
+        ExistDiary
+    });
+}
+
+exports.getBalance = async (req, res) => {
+    const params = req.body;
+    const balance = await Balance.findOne({ diaryBook: params.idDiary })
+    if (!balance) {
+        return res.status(400).send({
+            message: 'No existe el balance'
+        });
+    }
+
+    res.status(200).send({
+        message: 'Balance de saldos',
+        balance
     });
 }

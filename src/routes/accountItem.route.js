@@ -8,5 +8,6 @@ const mdAuth = require('../middlewares/authenticated');
 
 api.post('/addItemAccount', mdAuth.ensureAuth, accountItem.saveAccountItem);
 api.post('/getDiary', mdAuth.ensureAuth, accountItem.getDiary);
+api.post('/getBalance', mdAuth.ensureAuth, accountItem.getBalance);
 
 module.exports = api;
