@@ -193,7 +193,7 @@ exports.saveAccountItem = async (req, res) => {
 
 exports.getDiary = async (req, res) => {
     const params = req.body;
-    const diary = await DiaryBook.findOne({ diaryBook: params.idDiary }).populate({
+    const diary = await DiaryBook.findOne({ _id: params.idDiary }).populate({
         path: 'accountItems',
         populate: {
             path: 'accounts',

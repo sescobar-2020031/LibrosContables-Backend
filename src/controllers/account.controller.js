@@ -29,7 +29,7 @@ exports.getAccounts = async (req, res) => {
         const params = req.body
         const user = await Account.findOne({ email: params.email });
         if (!user) return res.status(500).send({ message: 'Cuenta no encontrada' });
-        let accounts = await Account.find({ user: req.user._id });
+        let accounts = await Account.find({ user: user._id });
         return res.status(200).send({ message: 'Cuentas Encontradas Exitosamente', accounts });
     } catch (err) {
         console.log(err);
