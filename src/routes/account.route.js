@@ -3,7 +3,7 @@
 const express = require("express");
 const api = express.Router();
 
-const account = require("../controllers/Account.controller");
+const account = require("../controllers/account.controller");
 const mdAuth = require("../middlewares/authenticated");
 
 api.post("/addAccount", mdAuth.ensureAuth, account.saveAccount);
